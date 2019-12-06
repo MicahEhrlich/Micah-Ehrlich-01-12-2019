@@ -1,0 +1,56 @@
+<div align="center" class="background">
+  <form class="example-form">
+    <mat-form-field class="example-full-width">
+      <input
+        type="text"
+        placeholder="Enter City Name"
+        aria-label="Number"
+        matInput
+        [formControl]="myControl"
+        [matAutocomplete]="auto"
+        (keyup)="displayCities($event)"
+      />
+      <mat-autocomplete
+        (optionSelected)="updateWeather($event.option.value)"
+        name="auto"
+        #auto="matAutocomplete"
+      >
+        <mat-select-trigger>{{ item }}</mat-select-trigger>
+
+        <mat-option *ngFor="let item of displayedCities" [value]="item">
+          {{ item.city }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
+
+  <div class="example-button-row">
+    <button
+      class="favorites"
+      mat-raised-button
+      matTooltip="check out favorites page"
+      (click)="addRemoveFavorites()"
+    >
+      {{ favoritesText }}
+    </button>
+  </div>
+  <div class="selected-city">
+    <img src="{{ displayedWeatherIcon }}" />
+
+    <h5>{{ displayedCity }}</h5>
+
+    <h5>{{ temperature }}</h5>
+  </div>
+
+  <h1>{{ displayedWeatherText }}</h1>
+  <div class="display-forecast">
+    <mat-card class="forecast-card" *ngFor="let item of daysForecast">
+      <h4>{{ item.Day }}</h4>
+      <h5>{{ item.Temperature }}</h5>
+      <mat-card-header>
+        <mat-card-title></mat-card-title>
+        <mat-card-subtitle></mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </div>
+</div>

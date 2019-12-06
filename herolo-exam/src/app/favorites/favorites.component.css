@@ -1,0 +1,17 @@
+.background {
+  background-color: dodgerblue;
+  color: darkblue;
+
+  height: 150%;
+  text-align: center;
+}
+
+.display-forecast {
+  background-color: dodgerblue;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}

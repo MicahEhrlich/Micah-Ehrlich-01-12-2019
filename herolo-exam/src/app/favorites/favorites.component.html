@@ -1,0 +1,15 @@
+<div align="center" class="background">
+  <div class="display-forecast">
+    <mat-card class="forecast-card" *ngFor="let item of weatherList">
+      <img src="{{ displayedWeatherIcon }}{{ item.WeatherIcon }}-s.png" />
+      <h4>{{ item.CityName }}</h4>
+      <h5>{{ item.TemperatureC }}</h5>
+      <h5>{{ item.WeatherText }}</h5>
+
+      <mat-card-header>
+        <mat-card-title></mat-card-title>
+        <mat-card-subtitle></mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </div>
+</div>
