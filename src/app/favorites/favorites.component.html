@@ -1,0 +1,29 @@
+<div align="center" [class.dark-mode]="darkMode" class="background container">
+  <button
+    class="example-button-row favorites"
+    mat-raised-button
+    matTooltip="Remove all cities from favorites"
+    (click)="clearFavorites()"
+  >
+    Clear
+    <mat-icon color="primary">favorite</mat-icon>
+  </button>
+  <div class="display-forecast">
+    <mat-card class="forecast-card" *ngFor="let item of weatherList">
+      <mat-card-header>
+        <mat-card-title>{{ item.CityName }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ item.TemperatureC }}{{ temperatureSign }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <button mat-button (click)="selectFavoritesWeather(item)">
+        <img
+          mat-card-image
+          src="{{ weatherIconPath }}{{ item.WeatherIcon }}-s.png"
+          alt=""
+        />
+        <h5>{{ item.WeatherText }}</h5>
+      </button>
+    </mat-card>
+  </div>
+</div>
