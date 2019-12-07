@@ -1,4 +1,21 @@
 .background {
-    background-color: dodgerblue;
-    height: 100%;
+  background-color: dodgerblue;
+  height: 100%;
 }
+
+.dark-mode {
+  filter: invert(100%);
+  height: 100%;
+  background-color: black;
+
+  overflow: hidden;
+  background: none repeat scroll 0 0;
+  
+  color: #ccc;
+}
+
+.dark-mode img {
+  filter: invert(100%);
+  height: 100%;
+}
+

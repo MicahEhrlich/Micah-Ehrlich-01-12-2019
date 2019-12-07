@@ -19,19 +19,38 @@ import { DailyForecast } from '../models/dailyForecast';
   styleUrls: ['./show-weather.component.css']
 })
 export class ShowWeatherComponent implements OnInit {
+  darkMode = true;
 
-  favoritesText = 'Add To Favorites';
+  DEFAULT_CITY = 'Tel Aviv';
+  DEFAULT_KEY = '215854';
+
+  
+  AddToFavorites = 'Add';
+  RemoveFromFavorites = 'Remove';
+
+  favoritesText = this.AddToFavorites;
+
+
   selectedCity: string;
+
+  showSpinner = false;
 
   displayedCity = '';
   celcius = true;
+
+  CELCIUS_SIGN = ' C°';
+  FAHRENHEIT_SIGN = ' F°';
+
+  temperatureSign = this.CELCIUS_SIGN;
+
   temperature = 0;
+
   displayedWeatherText = '';
 
   weatherIconPath = '../../assets/img/icons/';
   displayedWeatherIcon = this.weatherIconPath + '1-s.png';
 
-  favorites: Weather[] = [];
+  favorites: Weather[];
   currentWeather: Weather;
 
   myControl = new FormControl();
@@ -53,8 +72,24 @@ export class ShowWeatherComponent implements OnInit {
   }
 
   ngOnInit() {
-    // default key for Tel Aviv
-    let temp = { city: 'Tel Aviv', key: '215854' };
+    if (localStorage.length == 0) {
+      localStorage.setItem('temperatureSign', this.CELCIUS_SIGN);
+      localStorage.setItem('city', this.DEFAULT_CITY);
+      localStorage.setItem('key', this.DEFAULT_KEY);
+
+      localStorage.setItem('darkMode', 'false');
+      localStorage.setItem('favorites', '[]');
+      console.log('HELLO');
+    }
+
+    console.log(localStorage.getItem('city'));
+
+    localStorage.getItem('darkMode') == 'true' ? this.darkMode = true : this.darkMode = false;
+
+    this.temperatureSign = localStorage.getItem('temperatureSign');
+    console.log(this.temperatureSign);
+
+    let temp = { city: localStorage.getItem('city'), key: localStorage.getItem('key') };
     this.weatherList.weather.subscribe(favorites => { this.favorites = favorites; this.updateWeather(temp) });
 
 
@@ -74,16 +109,20 @@ export class ShowWeatherComponent implements OnInit {
   }
 
   updateWeather(value) {
+    this.showSpinner = true;
     this.selectedCity = value.city;
 
     this.weatherDetails = [];
-    this.weatherService.getCityWeather(value.key).subscribe(weather => { this.weatherDetails = weather; this.displayWeather(value) });
+    this.weatherService.getCityWeather(value.key).subscribe(weather => { this.weatherDetails = weather; this.displayWeather(value); this.updateFavoritesText() });
     this.getDaysForecast(value.key);
 
+  }
+
+  updateFavoritesText() {
     if (!this.isInFavorites())
-      this.favoritesText = 'Add To Favorites';
+      this.favoritesText = this.AddToFavorites;
     else
-      this.favoritesText = 'Remove From Favorites';
+      this.favoritesText = this.RemoveFromFavorites;
   }
 
   displayWeather(value) {
@@ -96,12 +135,10 @@ export class ShowWeatherComponent implements OnInit {
       TemperatureF: this.weatherDetails[0].Temperature.Imperial.Value
     }
 
-
     this.displayedCity = this.currentWeather.CityName;
     this.celcius ? this.temperature = this.currentWeather.TemperatureC : this.temperature = this.currentWeather.TemperatureF;
     this.displayedWeatherText = this.currentWeather.WeatherText;
     this.displayedWeatherIcon = this.weatherIconPath + this.currentWeather.WeatherIcon + '-s.png';
-
   }
 
 
@@ -122,9 +159,7 @@ export class ShowWeatherComponent implements OnInit {
   getDaysForecast(key) {
     this.detailedDaysForecast = { Headline: null, DailyForecasts: [] };
 
-    this.weatherService.getFiveDaysForecast(key).subscribe(forecast => { this.detailedDaysForecast = forecast; this.updateDailyForecast() });
-
-    //console.log(JSON.stringify(this.detailedDaysForecast));
+    this.weatherService.getFiveDaysForecast(key, this.celcius).subscribe(forecast => { this.detailedDaysForecast = forecast; this.updateDailyForecast() });
   }
 
   updateDailyForecast() {
@@ -144,19 +179,33 @@ export class ShowWeatherComponent implements OnInit {
       this.daysForecast.push(
         {
           Day: dayName,
-          Temperature: element.Temperature.Maximum.Value
+          Temperature: element.Temperature.Maximum.Value,
+          WeatherIcon: element.Day.Icon
         }
       )
     });
+
+    this.showSpinner = false;
+
   }
 
 
   addRemoveFavorites() {
     if (!this.isInFavorites()) {
       this.favorites.push(this.currentWeather);
+
     } else { this.removeFromFavorites(); }
     this.updateWeatherFavorites();
+    localStorage.setItem('favorites', JSON.stringify(this.favorites));
 
+  }
+
+  cityByKeyFavorites(key) {
+    this.favorites.forEach(element => {
+      if (element.key == key) {
+        return element.CityName;
+      }
+    });
   }
 
   isInFavorites() {
@@ -164,8 +213,7 @@ export class ShowWeatherComponent implements OnInit {
     this.favorites.forEach(element => {
       if (element.key == this.currentWeather.key) {
         exist = true;
-        this.favoritesText = 'Remove From Favorites';
-
+        this.favoritesText = this.RemoveFromFavorites;
       }
     });
     return exist;
@@ -178,7 +226,7 @@ export class ShowWeatherComponent implements OnInit {
         index = this.favorites.indexOf(element, 0);
     });
     this.favorites.splice(index, 1);
-    this.favoritesText = 'Add To Favorites';
+    this.favoritesText = this.AddToFavorites;
   }
 
   updateWeatherFavorites() {

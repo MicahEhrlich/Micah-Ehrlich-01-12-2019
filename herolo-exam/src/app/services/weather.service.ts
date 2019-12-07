@@ -6,6 +6,7 @@ import { Weather } from '../models/weather';
 import { City } from '../models/city';
 import { WeatherDetails } from '../models/weatherDetails';
 import { WeatherDaysForecastDetails } from '../models/weatherDaysForecastDetails';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -276,22 +277,40 @@ export class WeatherService {
 
   getCities(city): Observable<City[]> {
 
-    return this.http.get<City[]>(this.SEARCH_CITY_URL + this.API_KEY + '&q=' + city);
 
-    //return of(this.CITY);
+    return this.http.get<City[]>(this.SEARCH_CITY_URL + this.API_KEY + '&q=' + city).pipe(
+      catchError(this.handleError<City[]>('getCities', []))
+    );
+
+    //  return of(this.CITY);
   }
 
   getCityWeather(key): Observable<WeatherDetails[]> {
-    //console.log(key);
-    return this.http.get<WeatherDetails[]>(this.CITY_WEATHER_URL + key + '?apikey=' + this.API_KEY);
 
-    //return of(this.CITY_WEATHER);
+    return this.http.get<WeatherDetails[]>(this.CITY_WEATHER_URL + key + '?apikey=' + this.API_KEY).pipe(
+      catchError(this.handleError<WeatherDetails[]>('getCityWeather', []))
+    );
+
+    //  return of(this.CITY_WEATHER);
   }
 
-  getFiveDaysForecast(key): Observable<WeatherDaysForecastDetails> {
+  getFiveDaysForecast(key, celcius): Observable<WeatherDaysForecastDetails> {
 
-    return this.http.get<WeatherDaysForecastDetails>(this.FIVE_DAYS_FORECAST_URL + key + '?apikey=' + this.API_KEY + '&metric=true');
+
+    return this.http.get<WeatherDaysForecastDetails>(this.FIVE_DAYS_FORECAST_URL + key + '?apikey=' + this.API_KEY + '&metric=' + celcius).pipe(
+      catchError(this.handleError<WeatherDaysForecastDetails>('getFiveDaysForecast'))
+    );
     //return of(this.FIVE_DAYS_FORECAST);
+  }
+
+
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+
+      console.error(error);
+
+      return of(result as T);
+    };
   }
 }
 

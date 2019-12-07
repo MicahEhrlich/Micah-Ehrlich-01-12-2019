@@ -6,12 +6,18 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ShowWeatherComponent } from './show-weather/show-weather.component';
 
-import { MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatSelectModule, MatCardModule } from '@angular/material';
+import {
+  MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatSelectModule, MatCardModule,
+  MatSliderModule, MatSlideToggleModule, MatIconModule
+} from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FavoritesComponent } from './favorites/favorites.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 
 @NgModule({
@@ -33,7 +39,12 @@ import { MatButtonModule } from '@angular/material/button';
     MatAutocompleteModule,
     MatButtonModule,
     MatSelectModule,
-    MatCardModule
+    MatCardModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
